@@ -1,0 +1,6 @@
+FROM ruby:2.7.2
+
+ENV APP_HOME /app
+WORKDIR $APP_HOME
+
+ADD . $APP_HOME

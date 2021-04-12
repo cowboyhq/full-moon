@@ -2,7 +2,7 @@ PATH
   remote: .
   specs:
     full-moon (1.0.0)
-      activesupport (~> 5)
+      activesupport (>= 5)
 
 GEM
   remote: https://rubygems.org/
