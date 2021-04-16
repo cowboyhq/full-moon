@@ -2,8 +2,8 @@ module FullMoon
   class NextFullMoon
     SYNMONTH = 29.53058868.freeze
 
-    def self.next_full_moon
-      time = Time.now.to_i
+    def self.next_full_moon(time = nil)
+      time ||= Time.now.to_i
       full_moon = moon_phase(time, 0.5)
 
       return moon_phase(time, 0.5, true).floor if full_moon < time
