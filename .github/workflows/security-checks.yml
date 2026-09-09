@@ -1,0 +1,12 @@
+# Shared security baseline. Quarterly full-history scans use manual dispatch.
+name: Security checks
+on:
+  pull_request:
+  schedule:
+    - cron: "6 7 * * MON"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  security:
+    uses: cowboyhq/security-baseline/.github/workflows/security-checks.yml@b07d13346f3bfad838d7650967331bfc71ca5f49
