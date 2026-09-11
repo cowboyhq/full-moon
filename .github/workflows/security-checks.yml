@@ -1,0 +1,46 @@
+# Public repositories cannot call the private shared baseline.
+name: Security checks
+on:
+  pull_request:
+  schedule:
+    - cron: "6 7 * * MON"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  secrets:
+    name: Secrets (TruffleHog, verified only)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          fetch-depth: 0
+      - uses: trufflesecurity/trufflehog@363923b901c911a9164f50b6c423f47c15372b1c
+        with:
+          version: "3.97.4"
+          extra_args: --results=verified
+  dependencies:
+    name: Dependencies (OSV-Scanner)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - name: Scan lockfiles against OSV
+        continue-on-error: true
+        uses: google/osv-scanner-action/osv-scanner-action@6e4298ebc4db23e847df9b2e2de2939d6f066c67
+        with:
+          scan-args: |-
+            --recursive
+            --format=markdown
+            --output=osv-report.md
+            ./
+      - name: Publish dependency report
+        if: ${{ always() }}
+        shell: bash
+        run: |
+          if [ -s osv-report.md ]; then
+            cat osv-report.md >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "No dependency report produced; review scanner output and lockfile coverage." >> "$GITHUB_STEP_SUMMARY"
+          fi
